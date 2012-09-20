@@ -34,10 +34,17 @@ module LittleWire::SoftwarePWM
   end
   
   # Set the value of a single software pwm channel - value must be a number between 0 and 255 inclusive
-  def software_pwm_write channel, value
-    state = self.software_pwm
-    state[get_pin(LittleWire::SoftwarePWMPinMap, channel)] = value
-    self.software_pwm = state
+  def software_pwm_write *args
+    if args.first.is_a? Hash
+      state = self.software_pwm
+      args.first.each do |channel, value|
+        state[get_pin(LittleWire::SoftwarePWMPinMap, channel)] = value
+      end
+      self.software_pwm = state
+    else
+      raise "Invalid Arguments" unless args.length == 2
+      self.software_pwm_write(args.first => args.last)
+    end
   end
   
   def is_software_pwm_available?

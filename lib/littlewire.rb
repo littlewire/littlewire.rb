@@ -37,9 +37,9 @@ class LittleWire
     pwm_b: 1, pwm_1: 1, d1: 1, pin1: 1, miso: 1,
     pwm_a: 0, pwm_2: 0, d4: 0, pin4: 0, mosi: 0 }
   SoftwarePWMPinMap = { # TODO: figure out which pins these are
-    softpwm_1: 0, softpwm_a: 0, 
-    softpwm_2: 1, softpwm_b: 1,
-    softpwm_3: 2, softpwm_c: 2 }
+    softpwm_1: 0, softpwm_a: 0, pin4: 0, d4: 0, mosi: 0, pwm_a: 0, pwm_1: 0,
+    softpwm_2: 1, softpwm_b: 1, pin1: 1, d1: 1, miso: 1, pwm_b: 1, pwm_2: 1,
+    softpwm_3: 2, softpwm_c: 2, pin2: 2, d2: 2, sck: 2 }
   GenericPinMap = { # generic pinmap used by [] and []= methods to refer to anything
     d1: [:digital, :pin1],
     d2: [:digital, :pin2],
@@ -91,6 +91,13 @@ class LittleWire
     @hardware_pwm = [0, 0]
     @software_pwm_enabled = :unknown
     @software_pwm = [0, 0, 0]
+    
+    # shut everything down, trying to setup littlewire in consistent initial state in case previous programs
+    # messed with it's state
+    self.software_pwm_enabled = false
+    self.hardware_pwm_enabled = false
+    self.pin_mode(pin1: :input, pin2: :input, pin3: :input, pin4: :input)
+    self.digital_write(pin1: :gnd, pin2: :gnd, pin3: :gnd, pin4: :gnd)
   end
   
   # creates a lambda to close usb device when LittleWire is deallocated, without LittleWire instance closured in to it recursively
